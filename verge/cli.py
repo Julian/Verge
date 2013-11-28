@@ -8,6 +8,7 @@ from twisted.internet.task import coiterate
 
 class VergeProcess(protocol.ProcessProtocol):
     def __init__(self, stdout, stderr=sys.stderr, reactor=reactor):
+        self.done = defer.Deferred()
         self.reactor = reactor
         self.stdout = stdout
         self.stderr = stderr
@@ -20,12 +21,16 @@ class VergeProcess(protocol.ProcessProtocol):
             executable=command[0],
             args=command,
         )
+        return protocol.done
 
     def errReceived(self, data):
         self.stderr.write(data)
 
     def outReceived(self, data):
         self.stdout.write(data)
+
+    def processEnded(self, reason):
+        self.done.callback(None)
 
 
 def main(command, arguments=None, max_processes=None, stdout=sys.stdout):

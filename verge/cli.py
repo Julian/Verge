@@ -35,8 +35,9 @@ def main(command, arguments=None, max_processes=None, stdout=sys.stdout):
         for argument in arguments
     )
 
-    deferreds = [coiterate(processes) for _ in xrange(max_processes)]
-    return defer.gatherResults(deferreds)
+    return defer.gatherResults(
+        coiterate(processes) for _ in xrange(max_processes)
+    )
 
 
 parser = argparse.ArgumentParser()

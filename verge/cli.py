@@ -14,8 +14,12 @@ class VergeProcess(protocol.ProcessProtocol):
 
     @classmethod
     def spawn(cls, command, *args, **kwargs):
-        process = cls(*args, **kwargs)
-        process.reactor.spawnProcess(process, command[0], command, {})
+        protocol = cls(*args, **kwargs)
+        protocol.reactor.spawnProcess(
+            processProtocol=protocol,
+            executable=command[0],
+            args=command,
+        )
 
     def errReceived(self, data):
         self.stderr.write(data)
@@ -26,12 +30,12 @@ class VergeProcess(protocol.ProcessProtocol):
 
 def main(command, arguments=None, max_processes=None, stdout=sys.stdout):
     if arguments is None:
-        arguments = sys.stdin
+        arguments = (line[:-1] for line in sys.stdin)
     if max_processes is None:
         max_processes = multiprocessing.cpu_count()
 
     processes = (
-        VergeProcess.spawn(command + [argument.rstrip("\n")], stdout=stdout)
+        VergeProcess.spawn(command + [argument], stdout=stdout)
         for argument in arguments
     )
 

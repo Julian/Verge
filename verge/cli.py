@@ -34,8 +34,6 @@ class VergeProcess(protocol.ProcessProtocol):
 
 
 def main(command, arguments=None, max_processes=None, stdout=sys.stdout):
-    if arguments is None:
-        arguments = (line[:-1] for line in sys.stdin)
     if max_processes is None:
         max_processes = multiprocessing.cpu_count()
 
@@ -47,6 +45,11 @@ def main(command, arguments=None, max_processes=None, stdout=sys.stdout):
     return defer.gatherResults(
         coiterate(processes) for _ in xrange(max_processes)
     )
+
+
+def parse(argv=None, stdin=sys.stdin):
+    arguments = (line[:-1] for line in stdin)
+    return dict(vars(parser.parse_args(argv)), arguments=arguments)
 
 
 parser = argparse.ArgumentParser()

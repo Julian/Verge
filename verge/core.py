@@ -1,4 +1,5 @@
 import multiprocessing
+import re
 import sys
 
 from twisted.internet import defer, protocol, reactor
@@ -38,10 +39,33 @@ def run(command, arguments, max_processes=None, stdout=sys.stdout):
         max_processes = multiprocessing.cpu_count()
 
     processes = (
-        VergeProcess.spawn(command + [argument], stdout=stdout)
+        VergeProcess.spawn(format_command(command, argument), stdout=stdout)
         for argument in arguments
     )
 
     return defer.gatherResults(
         coiterate(processes) for _ in xrange(max_processes)
     )
+
+
+def format_command(command, argument):
+    formatted, matches = [], 0
+    for arg in command:
+        arg, subs_made = re.subn(r"\{(.*)\}", _special_format(argument), arg)
+        formatted.append(arg)
+        matches += subs_made
+
+    if not matches:
+        formatted.append(argument)
+
+    return formatted
+
+
+def _special_format(argument):
+    def replace(match):
+        format = match.group(1)
+        if not format:
+            return argument
+        elif format == ".":
+            return argument.partition(".")[0]
+    return replace

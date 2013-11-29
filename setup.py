@@ -5,6 +5,8 @@ from setuptools import find_packages, setup
 from verge import __version__
 
 
+BIN_DIR = os.path.join(os.path.dirname(__file__), "bin")
+
 with open(os.path.join(os.path.dirname(__file__), "README.rst")) as readme:
     long_description = readme.read()
 
@@ -30,5 +32,6 @@ setup(
     description="Parallel execution inspired by GNU Parallel",
     license="MIT",
     long_description=long_description,
+    scripts=[os.path.join(BIN_DIR, bin) for bin in os.listdir(BIN_DIR)],
     url="https://github.com/Julian/Verge",
 )

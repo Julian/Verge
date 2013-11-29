@@ -18,3 +18,13 @@ class TestParseCLI(TestCase):
                 "arguments": ["1", "2", "3"],
             },
         )
+
+    def test_command_line_arguments(self):
+        arguments = cli.parse(["program", ":::", "1", "2", "3"])
+        arguments["arguments"] = list(arguments["arguments"])
+        self.assertEqual(
+            arguments, {
+                "command": ["program"],
+                "arguments": ["1", "2", "3"],
+            },
+        )

@@ -3,6 +3,7 @@ import sys
 
 from twisted.internet import defer, protocol, reactor
 from twisted.internet.task import coiterate
+from twisted.python.procutils import which
 
 
 class VergeProcess(protocol.ProcessProtocol):
@@ -17,7 +18,7 @@ class VergeProcess(protocol.ProcessProtocol):
         protocol = cls(*args, **kwargs)
         protocol.reactor.spawnProcess(
             processProtocol=protocol,
-            executable=command[0],
+            executable=which(command[0])[0],
             args=command,
         )
         return protocol.done

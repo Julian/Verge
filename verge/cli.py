@@ -16,7 +16,9 @@ def parse(argv=None, stdin=sys.stdin):
     if not parallelized_arguments:
         parallelized_arguments = (line[:-1] for line in stdin)
 
-    return dict(vars(parser.parse_args(argv)), arguments=parallelized_arguments)
+    return dict(
+        vars(parser.parse_args(argv)), arguments=parallelized_arguments,
+    )
 
 
 parser = argparse.ArgumentParser()
